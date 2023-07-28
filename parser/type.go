@@ -3,11 +3,11 @@ package parser
 type PacketType byte
 
 type Packet struct {
-	Type        PacketType
-	Nsp         string
-	Data        any
-	Id          *uint64
-	Attachments *uint64
+	Type        PacketType `json:"type" mapstructure:"type" msgpack:"type"`
+	Nsp         string     `json:"nsp" mapstructure:"nsp" msgpack:"nsp"`
+	Data        any        `json:"data,omitempty" mapstructure:"data,omitempty" msgpack:"data,omitempty"`
+	Id          *uint64    `json:"id,omitempty" mapstructure:"id,omitempty" msgpack:"id,omitempty"`
+	Attachments *uint64    `json:"attachments,omitempty" mapstructure:"attachments,omitempty" msgpack:"attachments,omitempty"`
 }
 
 const (
