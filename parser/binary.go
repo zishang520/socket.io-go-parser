@@ -9,8 +9,8 @@ import (
 )
 
 type Placeholder struct {
-	Placeholder bool `json:"_placeholder" mapstructure:"_placeholder"`
-	Num         int  `json:"num" mapstructure:"num"`
+	Placeholder bool `json:"_placeholder" mapstructure:"_placeholder" msgpack:"_placeholder"`
+	Num         int  `json:"num" mapstructure:"num"  msgpack:"num"`
 }
 
 // Replaces every io.Reader | []byte in packet with a numbered placeholder.

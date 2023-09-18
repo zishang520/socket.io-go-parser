@@ -7,10 +7,10 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 h1:QldyIu/L63oPpyvQmHgvgickp1Yw510KJOqX7H24mg8=
 github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778/go.mod h1:2MuV+tbUrU1zIOPMxZ5EncGwgmMJsa+9ucAQZXxsObs=
-github.com/zishang520/engine.io v1.5.2 h1:EluA+dSLGa/dj7hpP96hppINyPNzIXgBbnmxxojuuJU=
-github.com/zishang520/engine.io v1.5.2/go.mod h1:glf2z15RTUSBffpNrR1h8+mJZA0VvP18O6+p5axTOCU=
-github.com/zishang520/engine.io-go-parser v1.2.0 h1:1EKi4quPEwuhRzbWIYW8t5kV4xePdYd42rBh10jyVG8=
-github.com/zishang520/engine.io-go-parser v1.2.0/go.mod h1:YBIkLpDtU5PXpNMM0cUPX5GUY9Zyo2W1sEwKMbk2WY4=
-golang.org/x/sys v0.10.0 h1:SqMFp9UcQJZa+pmYuAKjd9xq1f0j5rLcDIk0mj4qAsA=
-golang.org/x/sys v0.10.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+github.com/zishang520/engine.io v1.5.7 h1:vk+t7ZjTIkwCZXq1f9+eMpeKm9VCoF2S0FymqAXe3A8=
+github.com/zishang520/engine.io v1.5.7/go.mod h1:+B0++0wAdz0RX0gJSf8avKfOEvCXY+Bpuy/JWcBZ5AE=
+github.com/zishang520/engine.io-go-parser v1.2.2 h1:EeebzZwJ/798RO78Q0Mi66ZP4SRpIjEgQSCvcToVTKM=
+github.com/zishang520/engine.io-go-parser v1.2.2/go.mod h1:YBIkLpDtU5PXpNMM0cUPX5GUY9Zyo2W1sEwKMbk2WY4=
+golang.org/x/sys v0.11.0 h1:eG7RXZHdqOJ1i+0lgLgCpSXAp6M3LYlAo6osgSi0xOM=
+golang.org/x/sys v0.11.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=

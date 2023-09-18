@@ -32,11 +32,9 @@ type parser struct {
 func (p *parser) Encoder() Encoder {
 	return NewEncoder()
 }
-
 func (p *parser) Decoder() Decoder {
 	return NewDecoder()
 }
-
 func NewParser() Parser {
 	return &parser{}
 }
