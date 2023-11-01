@@ -2,32 +2,35 @@ package parser
 
 import (
 	"github.com/zishang520/engine.io-go-parser/types"
-	"github.com/zishang520/engine.io/events"
+	"github.com/zishang520/engine.io/v2/events"
 )
 
-// A socket.io Encoder instance
-type Encoder interface {
-	Encode(*Packet) []types.BufferInterface
-}
+type (
 
-// A socket.io Decoder instance
-type Decoder interface {
-	events.EventEmitter
-
-	Add(any) error
-	Destroy()
-}
-
-type Parser interface {
 	// A socket.io Encoder instance
-	Encoder() Encoder
+	Encoder interface {
+		Encode(*Packet) []types.BufferInterface
+	}
 
 	// A socket.io Decoder instance
-	Decoder() Decoder
-}
+	Decoder interface {
+		events.EventEmitter
 
-type parser struct {
-}
+		Add(any) error
+		Destroy()
+	}
+
+	Parser interface {
+		// A socket.io Encoder instance
+		Encoder() Encoder
+
+		// A socket.io Decoder instance
+		Decoder() Decoder
+	}
+
+	parser struct {
+	}
+)
 
 func (p *parser) Encoder() Encoder {
 	return NewEncoder()
@@ -35,6 +38,7 @@ func (p *parser) Encoder() Encoder {
 func (p *parser) Decoder() Decoder {
 	return NewDecoder()
 }
+
 func NewParser() Parser {
 	return &parser{}
 }
