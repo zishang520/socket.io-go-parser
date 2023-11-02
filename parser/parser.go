@@ -22,20 +22,20 @@ type (
 
 	Parser interface {
 		// A socket.io Encoder instance
-		Encoder() Encoder
+		NewEncoder() Encoder
 
 		// A socket.io Decoder instance
-		Decoder() Decoder
+		NewDecoder() Decoder
 	}
 
 	parser struct {
 	}
 )
 
-func (p *parser) Encoder() Encoder {
+func (p *parser) NewEncoder() Encoder {
 	return NewEncoder()
 }
-func (p *parser) Decoder() Decoder {
+func (p *parser) NewDecoder() Decoder {
 	return NewDecoder()
 }
 
