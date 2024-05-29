@@ -2,6 +2,7 @@ package parser
 
 import (
 	"sync"
+	"sync/atomic"
 
 	"github.com/zishang520/engine.io-go-parser/types"
 )
@@ -9,54 +10,50 @@ import (
 // Protocol version.
 const Protocol = 5
 
-// A manager of a binary event's 'buffer sequence'. Should
-// be constructed whenever a packet of type BINARY_EVENT is
-// decoded.
-type binaryreconstructor struct {
+// binaryReconstructor manages a binary event's buffer sequence.
+// It should be constructed whenever a packet of type BINARY_EVENT is decoded.
+type binaryReconstructor struct {
+	mu        sync.Mutex
 	buffers   []types.BufferInterface
-	reconPack *Packet
-
-	mu sync.Mutex
+	reconPack atomic.Pointer[Packet]
 }
 
-func NewBinaryReconstructor(packet *Packet) *binaryreconstructor {
-	return &binaryreconstructor{
-		buffers:   []types.BufferInterface{},
-		reconPack: packet,
+// newBinaryReconstructor creates a new binaryReconstructor.
+func newBinaryReconstructor(packet *Packet) *binaryReconstructor {
+	br := &binaryReconstructor{
+		buffers: []types.BufferInterface{},
 	}
+	br.reconPack.Store(packet)
+	return br
 }
 
-// Method to be called when binary data received from connection
-// after a BINARY_EVENT packet.
-func (b *binaryreconstructor) takeBinaryData(binData types.BufferInterface) (*Packet, error) {
-	b.mu.Lock()
-	defer b.mu.Unlock()
+// takeBinaryData handles incoming binary data for the reconstruction.
+func (br *binaryReconstructor) takeBinaryData(binData types.BufferInterface) (*Packet, error) {
+	br.mu.Lock()
+	defer br.mu.Unlock()
 
-	if b.reconPack == nil {
-		return nil, nil
-	}
+	br.buffers = append(br.buffers, binData)
 
-	b.buffers = append(b.buffers, binData)
-
-	if attachments := b.reconPack.Attachments; attachments != nil && uint64(len(b.buffers)) == *attachments {
-		// done with buffer list
-		packet, err := ReconstructPacket(b.reconPack, b.buffers)
-		if err != nil {
-			return nil, err
-		}
-		b.reconPack = nil
-		b.buffers = nil
-
-		return packet, nil
+	// Check if reconPack and Attachments are valid
+	if reconPack := br.reconPack.Load(); reconPack != nil && reconPack.Attachments != nil && uint64(len(br.buffers)) == *reconPack.Attachments {
+		// Done with buffer list - reconstruct the packet
+		packet, err := ReconstructPacket(reconPack, br.buffers)
+		br.cleanUp()
+		return packet, err
 	}
 	return nil, nil
 }
 
-// Cleans up binary packet reconstruction variables.
-func (b *binaryreconstructor) finishedReconstruction() {
-	b.mu.Lock()
-	defer b.mu.Unlock()
+// cleanUp cleans up the reconstruction state.
+func (br *binaryReconstructor) cleanUp() {
+	br.buffers = nil
+	br.reconPack.Store(nil)
+}
 
-	b.reconPack = nil
-	b.buffers = nil
+// finishedReconstruction cleans up the reconstruction state.
+func (br *binaryReconstructor) finishedReconstruction() {
+	br.mu.Lock()
+	defer br.mu.Unlock()
+
+	br.cleanUp()
 }

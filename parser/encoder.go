@@ -34,11 +34,9 @@ func (e *encoder) Encode(packet *Packet) []types.BufferInterface {
 }
 
 func _encodeData(data any) any {
-	if data == nil {
-		return nil
-	}
-
 	switch tdata := data.(type) {
+	case nil:
+		return nil
 	// *strings.Reader special handling
 	case *strings.Reader:
 		rdata, _ := types.NewStringBufferReader(tdata)
@@ -50,14 +48,14 @@ func _encodeData(data any) any {
 		}
 		return newData
 	case map[string]any:
-		newData := map[string]any{}
+		newData := make(map[string]any, len(tdata))
 		for k, v := range tdata {
 			newData[k] = _encodeData(v)
 		}
 		return newData
+	default:
+		return data
 	}
-
-	return data
 }
 
 // Encode packet as string.
