@@ -1,9 +1,11 @@
 package parser
 
 import (
+	"bytes"
 	"errors"
-	"io"
+	"unsafe"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/mitchellh/mapstructure"
 	"github.com/zishang520/engine.io-go-parser/types"
 )
@@ -13,52 +15,44 @@ type Placeholder struct {
 	Num         int  `json:"num" mapstructure:"num" msgpack:"num"`
 }
 
+func init() {
+	jsoniter.RegisterTypeEncoderFunc("types.BytesBuffer", func(ptr unsafe.Pointer, stream *jsoniter.Stream) {
+		bb := ((*types.BytesBuffer)(ptr))
+
+		bufList := stream.Attachment.([]types.BufferInterface)
+		_placeholder := &Placeholder{Placeholder: true, Num: len(bufList)}
+		stream.WriteVal(_placeholder)
+		stream.Attachment = append(bufList, bb)
+	}, nil)
+
+	jsoniter.RegisterTypeEncoderFunc("[]byte", func(ptr unsafe.Pointer, stream *jsoniter.Stream) {
+		bb := types.NewBytesBuffer(nil)
+		barr := ((*[]byte)(ptr))
+		bb.Write(*barr)
+
+		bufList := stream.Attachment.([]types.BufferInterface)
+		_placeholder := &Placeholder{Placeholder: true, Num: len(bufList)}
+		stream.WriteVal(_placeholder)
+		stream.Attachment = append(bufList, bb)
+	}, nil)
+}
+
 // Replaces every io.Reader | []byte in packet with a numbered placeholder.
 func DeconstructPacket(packet *Packet) (pack *Packet, buffers []types.BufferInterface) {
 	pack = packet
-	pack.Data = _deconstructPacket(packet.Data, &buffers)
+
+	// Run the serialization now, replacing any bytebuffers/[]byte found along the way with placeholders
+	buf := &bytes.Buffer{}
+	ns := jsoniter.NewStream(jsoniter.ConfigDefault, buf, buf.Cap())
+	ns.Attachment = buffers
+	ns.WriteVal(pack.Data)
+	buffers = ns.Attachment.([]types.BufferInterface)
+	ns.Flush()
+	pack.Data = buf.String()
+
 	attachments := uint64(len(buffers))
 	pack.Attachments = &attachments // number of binary 'attachments'
 	return pack, buffers
-}
-
-func _deconstructPacket(data any, buffers *[]types.BufferInterface) any {
-	if data == nil {
-		return nil
-	}
-
-	if IsBinary(data) {
-		_placeholder := &Placeholder{Placeholder: true, Num: len(*buffers)}
-		rdata := types.NewBytesBuffer(nil)
-		switch tdata := data.(type) {
-		case io.Reader:
-			if c, ok := data.(io.Closer); ok {
-				defer c.Close()
-			}
-			rdata.ReadFrom(tdata)
-		case []byte:
-			rdata.Write(tdata)
-		}
-		*buffers = append(*buffers, rdata)
-		return _placeholder
-	}
-
-	switch tdata := data.(type) {
-	case []any:
-		newData := make([]any, 0, len(tdata))
-		for _, v := range tdata {
-			newData = append(newData, _deconstructPacket(v, buffers))
-		}
-		return newData
-	case map[string]any:
-		newData := map[string]any{}
-		for k, v := range tdata {
-			newData[k] = _deconstructPacket(v, buffers)
-		}
-		return newData
-	default:
-		return data
-	}
 }
 
 // Reconstructs a binary packet from its placeholder packet and buffers

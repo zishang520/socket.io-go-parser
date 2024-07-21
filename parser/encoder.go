@@ -53,9 +53,9 @@ func _encodeData(data any) any {
 			newData[k] = _encodeData(v)
 		}
 		return newData
-	default:
-		return data
 	}
+
+	return data
 }
 
 // Encode packet as string.
@@ -79,8 +79,13 @@ func (e *encoder) encodeAsString(packet *Packet) types.BufferInterface {
 	}
 	// json data
 	if nil != packet.Data {
-		if b, err := json.Marshal(_encodeData(packet.Data)); err == nil {
-			str.Write(b)
+		if pds, is := packet.Data.(string); is {
+			// Already serialized in the DeconstructPacket function
+			str.WriteString(pds)
+		} else {
+			if b, err := json.Marshal(_encodeData(packet.Data)); err == nil {
+				str.Write(b)
+			}
 		}
 	}
 	parser_log.Debug("encoded %v as %v", packet, str)

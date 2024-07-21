@@ -2,6 +2,7 @@ package parser
 
 import (
 	"io"
+	"reflect"
 	"strings"
 
 	"github.com/zishang520/engine.io-go-parser/types"
@@ -30,12 +31,25 @@ func HasBinary(data any) bool {
 				return true
 			}
 		}
+		return false
 	case map[string]any:
 		for _, v := range o {
 			if HasBinary(v) {
 				return true
 			}
 		}
+		return false
 	}
+	dv := reflect.ValueOf(data)
+	if dv.Kind() == reflect.Struct {
+		for fi := range dv.NumField() {
+			dfv := dv.Field(fi)
+			if dfv.CanInterface() && HasBinary(dfv.Interface()) {
+				return true
+			}
+		}
+		return false
+	}
+
 	return IsBinary(data)
 }
