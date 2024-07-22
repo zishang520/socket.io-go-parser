@@ -79,9 +79,9 @@ func (e *encoder) encodeAsString(packet *Packet) types.BufferInterface {
 	}
 	// json data
 	if nil != packet.Data {
-		if pds, is := packet.Data.(string); is {
+		if packet.preSerializedData != "" {
 			// Already serialized in the DeconstructPacket function
-			str.WriteString(pds)
+			str.WriteString(packet.preSerializedData)
 		} else {
 			if b, err := json.Marshal(_encodeData(packet.Data)); err == nil {
 				str.Write(b)

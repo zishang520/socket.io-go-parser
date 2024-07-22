@@ -48,7 +48,7 @@ func DeconstructPacket(packet *Packet) (pack *Packet, buffers []types.BufferInte
 	ns.WriteVal(pack.Data)
 	buffers = ns.Attachment.([]types.BufferInterface)
 	ns.Flush()
-	pack.Data = buf.String()
+	pack.preSerializedData = buf.String()
 
 	attachments := uint64(len(buffers))
 	pack.Attachments = &attachments // number of binary 'attachments'

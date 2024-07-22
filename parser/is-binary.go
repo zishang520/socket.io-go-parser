@@ -41,6 +41,9 @@ func HasBinary(data any) bool {
 		return false
 	}
 	dv := reflect.ValueOf(data)
+	if dv.Kind() == reflect.Pointer {
+		return IsBinary(dv.Elem().Interface())
+	}
 	if dv.Kind() == reflect.Struct {
 		for fi := range dv.NumField() {
 			dfv := dv.Field(fi)
