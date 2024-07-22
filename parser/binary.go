@@ -25,7 +25,7 @@ func init() {
 		stream.Attachment = append(bufList, bb)
 	}, nil)
 
-	jsoniter.RegisterTypeEncoderFunc("[]byte", func(ptr unsafe.Pointer, stream *jsoniter.Stream) {
+	jsoniter.RegisterTypeEncoderFunc("[]uint8", func(ptr unsafe.Pointer, stream *jsoniter.Stream) {
 		bb := types.NewBytesBuffer(nil)
 		barr := ((*[]byte)(ptr))
 		bb.Write(*barr)

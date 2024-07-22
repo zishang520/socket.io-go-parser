@@ -40,11 +40,16 @@ func HasBinary(data any) bool {
 		}
 		return false
 	}
-	dv := reflect.ValueOf(data)
-	if dv.Kind() == reflect.Pointer {
-		return IsBinary(dv.Elem().Interface())
+
+	if IsBinary(data) {
+		return true
 	}
-	if dv.Kind() == reflect.Struct {
+
+	dv := reflect.ValueOf(data)
+	switch dv.Kind() {
+	case reflect.Pointer:
+		return IsBinary(dv.Elem().Interface())
+	case reflect.Struct:
 		for fi := range dv.NumField() {
 			dfv := dv.Field(fi)
 			if dfv.CanInterface() && HasBinary(dfv.Interface()) {
@@ -52,7 +57,25 @@ func HasBinary(data any) bool {
 			}
 		}
 		return false
+	case reflect.Array, reflect.Slice:
+		for i := range dv.Len() {
+			av := dv.Index(i)
+			if av.CanInterface() && HasBinary(av.Interface()) {
+				return true
+			}
+		}
+		return false
+	case reflect.Map:
+		mr := dv.MapRange()
+		for mr.Next() {
+			// Keys can't be binary blobs in json, so only check values
+			mv := mr.Value()
+			if mv.CanInterface() && HasBinary(mv.Interface()) {
+				return true
+			}
+		}
+		return false
+	default:
+		return false
 	}
-
-	return IsBinary(data)
 }
