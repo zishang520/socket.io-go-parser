@@ -164,7 +164,6 @@ func (d *decoder) decodeString(str types.BufferInterface) (packet *Packet, err e
 	} else {
 		if '/' == nsp {
 			_nsp, err := str.ReadString(',')
-			fmt.Println(_nsp)
 			if err != nil {
 				if err != io.EOF {
 					return nil, errors.New("Illegal namespace")
