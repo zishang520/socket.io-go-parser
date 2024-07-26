@@ -45,9 +45,7 @@ func (d *decoder) Add(data any) error {
 		if d.reconstructor.Load() != nil {
 			return errors.New("got plaintext data when reconstructing a packet")
 		}
-		if err := d.decodeAsString(types.NewStringBufferString(tdata)); err != nil {
-			return err
-		}
+		return d.decodeAsString(types.NewStringBufferString(tdata))
 	case *strings.Reader:
 		if d.reconstructor.Load() != nil {
 			return errors.New("got plaintext data when reconstructing a packet")
@@ -56,49 +54,45 @@ func (d *decoder) Add(data any) error {
 		if err != nil {
 			return err
 		}
-		if err := d.decodeAsString(rdata); err != nil {
-			return err
-		}
+		return d.decodeAsString(rdata)
 	case *types.StringBuffer:
 		if d.reconstructor.Load() != nil {
 			return errors.New("got plaintext data when reconstructing a packet")
 		}
-		if err := d.decodeAsString(tdata); err != nil {
-			return err
-		}
+		return d.decodeAsString(tdata)
 	default:
-		if IsBinary(data) {
-			// raw binary data
-			reconstructor := d.reconstructor.Load()
-			if reconstructor == nil {
-				return errors.New("got binary data when not reconstructing a packet")
-			}
-
-			rdata := types.NewBytesBuffer(nil)
-			switch tdata := data.(type) {
-			case io.Reader:
-				if c, ok := data.(io.Closer); ok {
-					defer c.Close()
-				}
-				if _, err := rdata.ReadFrom(tdata); err != nil {
-					return err
-				}
-			case []byte:
-				if _, err := rdata.Write(tdata); err != nil {
-					return err
-				}
-			}
-			packet, err := reconstructor.takeBinaryData(rdata)
-			if err != nil {
-				return errors.New(fmt.Sprintf("Decode error: %v", err.Error()))
-			}
-			if packet != nil {
-				// received final buffer
-				d.reconstructor.Store(nil)
-				d.Emit("decoded", packet)
-			}
-		} else {
+		if !IsBinary(data) {
 			return errors.New(fmt.Sprintf("Unknown type: %v", data))
+		}
+
+		// raw binary data
+		reconstructor := d.reconstructor.Load()
+		if reconstructor == nil {
+			return errors.New("got binary data when not reconstructing a packet")
+		}
+
+		rdata := types.NewBytesBuffer(nil)
+		switch tdata := data.(type) {
+		case io.Reader:
+			if c, ok := data.(io.Closer); ok {
+				defer c.Close()
+			}
+			if _, err := rdata.ReadFrom(tdata); err != nil {
+				return err
+			}
+		case []byte:
+			if _, err := rdata.Write(tdata); err != nil {
+				return err
+			}
+		}
+		packet, err := reconstructor.takeBinaryData(rdata)
+		if err != nil {
+			return errors.New(fmt.Sprintf("Decode error: %v", err.Error()))
+		}
+		if packet != nil {
+			// received final buffer
+			d.reconstructor.Store(nil)
+			d.Emit("decoded", packet)
 		}
 	}
 
@@ -162,20 +156,22 @@ func (d *decoder) decodeString(str types.BufferInterface) (packet *Packet, err e
 	}
 
 	// look up namespace (if any)
-	if nsp, err := str.ReadByte(); err == nil {
+	if nsp, err := str.ReadByte(); err != nil {
+		if err != io.EOF {
+			return nil, errors.New("Illegal namespace")
+		}
+		packet.Nsp = "/"
+	} else {
 		if '/' == nsp {
 			_nsp, err := str.ReadString(',')
+			fmt.Println(_nsp)
 			if err != nil {
 				if err != io.EOF {
 					return nil, errors.New("Illegal namespace")
 				}
 				packet.Nsp = "/" + _nsp
 			} else {
-				_l := len(_nsp)
-				if _l < 1 {
-					return nil, errors.New("Illegal namespace")
-				}
-				packet.Nsp = "/" + _nsp[:_l-1]
+				packet.Nsp = "/" + _nsp[:len(_nsp)-1]
 			}
 		} else {
 			if err := str.UnreadByte(); err != nil {
@@ -183,11 +179,6 @@ func (d *decoder) decodeString(str types.BufferInterface) (packet *Packet, err e
 			}
 			packet.Nsp = "/"
 		}
-	} else {
-		if err != io.EOF {
-			return nil, errors.New("Illegal namespace")
-		}
-		packet.Nsp = "/"
 	}
 
 	if str.Len() > 0 {
