@@ -81,13 +81,15 @@ func _reconstructPacket(data any, buffers *[]types.BufferInterface) (any, error)
 		}
 		return newData, nil
 	case map[string]any:
+		// Check if the map represents a Placeholder
 		var _placeholder Placeholder
 		if mapstructure.Decode(d, &_placeholder) == nil && _placeholder.Placeholder {
 			if _placeholder.Num >= 0 && _placeholder.Num < len(*buffers) {
-				return (*buffers)[_placeholder.Num], nil // appropriate buffer (should be natural order anyway)
+				return (*buffers)[_placeholder.Num], nil
 			}
 			return nil, errors.New("illegal attachments")
 		}
+
 		newData := make(map[string]any, len(d))
 		for k, v := range d {
 			_data, err := _reconstructPacket(v, buffers)
