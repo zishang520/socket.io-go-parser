@@ -2,6 +2,7 @@ package parser
 
 import (
 	"bytes"
+	"encoding/json"
 	"testing"
 
 	"github.com/zishang520/engine.io/v2/types"
@@ -18,6 +19,7 @@ func TestDeconstructPacket(t *testing.T) {
 		},
 		types.NewBytesBuffer([]byte{0x07, 0x08, 0x09}),
 		types.NewStringBuffer([]byte{0x07, 0x08, 0x09}),
+		2222,
 	}
 	// Prepare the packet with mixed data
 	packet := &Packet{
@@ -61,12 +63,12 @@ func TestReconstructPacket(t *testing.T) {
 		Type: EVENT,
 		Data: []any{
 			"string data",
-			map[string]any{"_placeholder": true, "num": float64(0)},
+			map[string]any{"_placeholder": true, "num": json.Number("0")},
 			map[string]any{
 				"key":  "value",
-				"file": map[string]any{"_placeholder": true, "num": float64(1)},
+				"file": map[string]any{"_placeholder": true, "num": json.Number("1")},
 			},
-			map[string]any{"_placeholder": true, "num": float64(2)},
+			map[string]any{"_placeholder": true, "num": json.Number("2")},
 			types.NewStringBuffer([]byte{0x07, 0x08, 0x09}),
 		},
 		Attachments: new(uint64),
