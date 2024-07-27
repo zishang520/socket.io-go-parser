@@ -3,9 +3,8 @@ module github.com/zishang520/socket.io-go-parser/v2
 go 1.22.2
 
 require (
-	github.com/mitchellh/mapstructure v1.5.0
 	github.com/zishang520/engine.io-go-parser v1.2.5
-	github.com/zishang520/engine.io/v2 v2.1.0
+	github.com/zishang520/engine.io/v2 v2.2.1
 )
 
 require (

@@ -2,15 +2,15 @@ package parser
 
 import (
 	"errors"
+	"fmt"
 	"io"
 
-	"github.com/mitchellh/mapstructure"
 	"github.com/zishang520/engine.io-go-parser/types"
 )
 
 type Placeholder struct {
-	Placeholder bool `json:"_placeholder" mapstructure:"_placeholder" msgpack:"_placeholder"`
-	Num         int  `json:"num" mapstructure:"num" msgpack:"num"`
+	Placeholder bool  `json:"_placeholder" msgpack:"_placeholder"`
+	Num         int64 `json:"num" msgpack:"num"`
 }
 
 // Replaces every io.Reader | []byte in packet with a numbered placeholder.
@@ -28,7 +28,7 @@ func _deconstructPacket(data any, buffers *[]types.BufferInterface) any {
 	}
 
 	if IsBinary(data) {
-		_placeholder := &Placeholder{Placeholder: true, Num: len(*buffers)}
+		_placeholder := &Placeholder{Placeholder: true, Num: int64(len(*buffers))}
 		rdata := types.NewBytesBuffer(nil)
 		switch tdata := data.(type) {
 		case io.Reader:
@@ -72,6 +72,34 @@ func ReconstructPacket(packet *Packet, buffers []types.BufferInterface) (*Packet
 	return packet, nil
 }
 
+func extractValue[T any](m map[string]any, key string) (v T, err error) {
+	val, ok := m[key]
+	if !ok {
+		return v, fmt.Errorf("missing '%s' field", key)
+	}
+	if v, ok := val.(T); ok {
+		return v, nil
+	}
+	return v, fmt.Errorf("invalid type for '%s' field: expected %T, got %T", key, v, val)
+}
+
+func processPlaceholder(d map[string]any) (*Placeholder, error) {
+	placeholder, err := extractValue[bool](d, "_placeholder")
+	if err != nil {
+		return nil, err
+	}
+
+	num, err := extractValue[float64](d, "num")
+	if err != nil {
+		return nil, err
+	}
+
+	return &Placeholder{
+		Placeholder: placeholder,
+		Num:         int64(num),
+	}, nil
+}
+
 func _reconstructPacket(data any, buffers *[]types.BufferInterface) (any, error) {
 	switch d := data.(type) {
 	case nil:
@@ -87,10 +115,8 @@ func _reconstructPacket(data any, buffers *[]types.BufferInterface) (any, error)
 		}
 		return newData, nil
 	case map[string]any:
-		// Check if the map represents a Placeholder
-		var _placeholder Placeholder
-		if mapstructure.Decode(d, &_placeholder) == nil && _placeholder.Placeholder {
-			if _placeholder.Num >= 0 && _placeholder.Num < len(*buffers) {
+		if _placeholder, err := processPlaceholder(d); err == nil && _placeholder.Placeholder {
+			if _placeholder.Num >= 0 && _placeholder.Num < int64(len(*buffers)) {
 				return (*buffers)[_placeholder.Num], nil
 			}
 			return nil, errors.New("illegal attachments")
