@@ -1,4 +1,4 @@
-module github.com/zishang520/socket.io-go-parser/v2
+module github.com/zishang520/socket.io-go-parser/v3
 
 go 1.24.1
 

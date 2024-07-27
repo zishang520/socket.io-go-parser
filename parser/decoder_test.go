@@ -2,6 +2,7 @@ package parser
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"reflect"
 	"strings"
@@ -90,7 +91,7 @@ func TestDecodeString(t *testing.T) {
 		{
 			"Valid BINARY_EVENT packet",
 			"51-[\"hello\",\"world\",{\"_placeholder\": true, \"num\": 0}]",
-			&Packet{Type: BINARY_EVENT, Nsp: "/", Attachments: new(uint64), Data: []any{"hello", "world", map[string]any{"_placeholder": true, "num": float64(0)}}},
+			&Packet{Type: BINARY_EVENT, Nsp: "/", Attachments: new(uint64), Data: []any{"hello", "world", map[string]any{"_placeholder": true, "num": json.Number("0")}}},
 			false,
 		},
 		{

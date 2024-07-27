@@ -215,7 +215,9 @@ func (d *decoder) decodeString(str types.BufferInterface) (packet *Packet, err e
 	// look up json data
 	if str.Len() > 0 {
 		var payload any
-		if json.NewDecoder(str).Decode(&payload) != nil {
+		decoder := json.NewDecoder(str)
+		decoder.UseNumber()
+		if decoder.Decode(&payload) != nil {
 			return nil, errors.New("invalid payload")
 		}
 		if isPayloadValid(packet.Type, payload) {

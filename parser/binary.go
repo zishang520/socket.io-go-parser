@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -89,14 +90,19 @@ func processPlaceholder(d map[string]any) (*Placeholder, error) {
 		return nil, err
 	}
 
-	num, err := extractValue[float64](d, "num")
+	num, err := extractValue[json.Number](d, "num")
+	if err != nil {
+		return nil, err
+	}
+
+	numInt, err := num.Int64()
 	if err != nil {
 		return nil, err
 	}
 
 	return &Placeholder{
 		Placeholder: placeholder,
-		Num:         int64(num),
+		Num:         numInt,
 	}, nil
 }
 
