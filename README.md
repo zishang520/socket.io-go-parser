@@ -2,7 +2,7 @@
 # socket.io-go-parser
 
 [![Build Status](https://github.com/zishang520/socket.io-go-parser/workflows/Go/badge.svg?branch=main)](https://github.com/zishang520/socket.io-go-parser/actions)
-[![GoDoc](https://pkg.go.dev/badge/github.com/zishang520/socket.io-go-parser/v2?utm_source=godoc)](https://pkg.go.dev/github.com/zishang520/socket.io-go-parser/v2)
+[![GoDoc](https://pkg.go.dev/badge/github.com/zishang520/socket.io-go-parser/v3?utm_source=godoc)](https://pkg.go.dev/github.com/zishang520/socket.io-go-parser/v3)
 
 This is the golang parser for the socket.io protocol encoding,
 shared by both
@@ -31,7 +31,7 @@ package main
 
 import (
   "github.com/zishang520/engine.io/v2/utils"
-  "github.com/zishang520/socket.io-go-parser/v2/parser"
+  "github.com/zishang520/socket.io-go-parser/v3/parser"
 )
 
 func main() {
@@ -67,7 +67,7 @@ package main
 
 import (
   "github.com/zishang520/engine.io/v2/utils"
-  "github.com/zishang520/socket.io-go-parser/v2/parser"
+  "github.com/zishang520/socket.io-go-parser/v3/parser"
 )
 
 func main() {

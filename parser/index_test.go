@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/zishang520/engine.io-go-parser/types"
@@ -28,14 +29,14 @@ func TestTakeBinaryData(t *testing.T) {
 		Type: EVENT,
 		Data: []any{
 			"string data",
-			map[string]any{"_placeholder": true, "num": float64(0)},
+			map[string]any{"_placeholder": true, "num": json.Number("0")},
 			map[string]any{
 				"key":  "value",
-				"file": map[string]any{"_placeholder": true, "num": float64(1)},
+				"file": map[string]any{"_placeholder": true, "num": json.Number("1")},
 			},
-			map[string]any{"_placeholder": true, "num": float64(2)},
+			map[string]any{"_placeholder": true, "num": json.Number("2")},
 			types.NewStringBuffer([]byte{0x07, 0x08, 0x09}),
-			map[string]any{"_placeholder": true, "num": float64(3)},
+			map[string]any{"_placeholder": true, "num": json.Number("3")},
 		},
 		Attachments: new(uint64),
 	}
@@ -81,12 +82,12 @@ func TestTakeBinaryDataErrorHandling(t *testing.T) {
 		Type: EVENT,
 		Data: []any{
 			"string data",
-			map[string]any{"_placeholder": true, "num": float64(0)},
+			map[string]any{"_placeholder": true, "num": json.Number("0")},
 			map[string]any{
 				"key":  "value",
-				"file": map[string]any{"_placeholder": true, "num": float64(1)},
+				"file": map[string]any{"_placeholder": true, "num": json.Number("1")},
 			},
-			map[string]any{"_placeholder": true, "num": float64(2)},
+			map[string]any{"_placeholder": true, "num": json.Number("2")},
 			types.NewStringBuffer([]byte{0x07, 0x08, 0x09}),
 		},
 		Attachments: new(uint64),
@@ -115,12 +116,12 @@ func TestCleanUp(t *testing.T) {
 		Type: EVENT,
 		Data: []any{
 			"string data",
-			map[string]any{"_placeholder": true, "num": float64(0)},
+			map[string]any{"_placeholder": true, "num": json.Number("0")},
 			map[string]any{
 				"key":  "value",
-				"file": map[string]any{"_placeholder": true, "num": float64(1)},
+				"file": map[string]any{"_placeholder": true, "num": json.Number("1")},
 			},
-			map[string]any{"_placeholder": true, "num": float64(2)},
+			map[string]any{"_placeholder": true, "num": json.Number("2")},
 			types.NewStringBuffer([]byte{0x07, 0x08, 0x09}),
 		},
 		Attachments: new(uint64),
