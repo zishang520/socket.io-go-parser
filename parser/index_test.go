@@ -6,12 +6,6 @@ import (
 	"github.com/zishang520/engine.io-go-parser/types"
 )
 
-// MockPacket is a mock implementation of a packet for testing purposes
-type MockPacket struct {
-	Data        any
-	Attachments *uint64
-}
-
 func TestNewBinaryReconstructor(t *testing.T) {
 	packet := &Packet{Attachments: new(uint64)}
 	*packet.Attachments = 1

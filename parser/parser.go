@@ -5,14 +5,13 @@ import (
 	"github.com/zishang520/engine.io/v2/events"
 )
 
+// Encoder defines an interface for socket.io encoding.
 type (
-
-	// A socket.io Encoder instance
 	Encoder interface {
 		Encode(*Packet) []types.BufferInterface
 	}
 
-	// A socket.io Decoder instance
+	// Decoder defines an interface for socket.io decoding.
 	Decoder interface {
 		events.EventEmitter
 
@@ -20,25 +19,27 @@ type (
 		Destroy()
 	}
 
+	// Parser defines an interface for creating Encoder and Decoder instances.
 	Parser interface {
-		// A socket.io Encoder instance
 		NewEncoder() Encoder
-
-		// A socket.io Decoder instance
 		NewDecoder() Decoder
 	}
 
-	parser struct {
-	}
+	// parser implements the Parser interface.
+	parser struct{}
 )
 
+// NewEncoder creates a new Encoder instance.
 func (p *parser) NewEncoder() Encoder {
 	return NewEncoder()
 }
+
+// NewDecoder creates a new Decoder instance.
 func (p *parser) NewDecoder() Decoder {
 	return NewDecoder()
 }
 
+// NewParser creates a new Parser instance.
 func NewParser() Parser {
 	return &parser{}
 }
