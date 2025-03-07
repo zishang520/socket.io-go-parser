@@ -3,7 +3,7 @@ package parser
 import (
 	"testing"
 
-	"github.com/zishang520/engine.io-go-parser/types"
+	"github.com/zishang520/engine.io/v2/types"
 )
 
 func TestNewBinaryReconstructor(t *testing.T) {

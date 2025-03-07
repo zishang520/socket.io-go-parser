@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/zishang520/engine.io-go-parser/types"
 	"github.com/zishang520/engine.io/v2/events"
+	"github.com/zishang520/engine.io/v2/types"
 )
 
 // Encoder defines an interface for socket.io encoding.

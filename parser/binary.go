@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/zishang520/engine.io-go-parser/types"
+	"github.com/zishang520/engine.io/v2/types"
 )
 
 type Placeholder struct {

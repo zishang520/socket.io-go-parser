@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zishang520/engine.io-go-parser/types"
+	"github.com/zishang520/engine.io/v2/types"
 )
 
 func TestNewDecoder(t *testing.T) {

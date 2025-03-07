@@ -4,7 +4,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/zishang520/engine.io-go-parser/types"
+	"github.com/zishang520/engine.io/v2/types"
 )
 
 // Protocol version.

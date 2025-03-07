@@ -4,7 +4,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/zishang520/engine.io-go-parser/types"
+	"github.com/zishang520/engine.io/v2/types"
 )
 
 // IsBinary returns true if the data is a binary type (Buffer or File).

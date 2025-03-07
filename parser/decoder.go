@@ -9,17 +9,16 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/zishang520/engine.io-go-parser/types"
 	"github.com/zishang520/engine.io/v2/events"
 	"github.com/zishang520/engine.io/v2/log"
-	_types "github.com/zishang520/engine.io/v2/types"
+	"github.com/zishang520/engine.io/v2/types"
 )
 
 var (
 	parser_log = log.NewLog("socket.io:parser")
 
 	// These strings must not be used as event names, as they have a special meaning.
-	RESERVED_EVENTS = _types.NewSet(
+	RESERVED_EVENTS = types.NewSet(
 		"connect",       // used on the client side
 		"connect_error", // used on the client side
 		"disconnect",    // used on both sides

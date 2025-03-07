@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zishang520/engine.io-go-parser/types"
+	"github.com/zishang520/engine.io/v2/types"
 )
 
 // MockBuffer is a mock implementation of BufferInterface for testing purposes
