@@ -2,7 +2,7 @@ module github.com/zishang520/socket.io-go-parser/v2
 
 go 1.24.1
 
-require github.com/zishang520/engine.io/v2 v2.4.8
+require github.com/zishang520/engine.io/v2 v2.4.9
 
 require (
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
