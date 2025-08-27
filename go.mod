@@ -2,6 +2,8 @@ module github.com/zishang520/socket.io-go-parser/v2
 
 go 1.24.1
 
+retract v2.5.1
+
 require github.com/zishang520/engine.io/v2 v2.5.0
 
 require (
